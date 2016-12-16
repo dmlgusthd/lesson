@@ -1,9 +1,6 @@
 package spms.dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,9 +10,43 @@ import spms.vo.Member;
 
 public class MemberDao {
 	Connection connection;
-	
+	PreparedStatement stmt = null;
+	ResultSet rs = null;
 	public void setConnection(Connection connection){
 		this.connection = connection;
+	}
+	
+	public int insert(Member member) throws Exception {
+		int resultset = 0;
+		String sql = "INSERT INTO MEMBERS(EMAIL,PWD,MNAME,CRE_DATE,MOD_DATE) VALUES (?,?,?,NOW(),NOW())";
+		try{
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, member.getEmail());
+			stmt.setString(2, member.getPassword());
+			stmt.setString(3, member.getName());
+			resultset = stmt.executeUpdate();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			try {if (stmt != null) stmt.close();} catch(Exception e) {}
+		}
+		return resultset;
+	}
+	
+	public int delete(Member member) throws Exception {
+		int resultset = 0;
+		String sql = "DELETE FROM MEMBERS WHERE MNO=?";
+		try{
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, member.getNo());
+			resultset = stmt.executeUpdate();
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			try {if (stmt != null) stmt.close();} catch(Exception e) {}
+		}
+		return resultset;
 	}
 
 	public List<Member> selectList() throws Exception {
@@ -36,7 +67,7 @@ public class MemberDao {
 							.setEmail(rs.getString("EMAIL"))
 							.setCreatedDate(rs.getDate("CRE_DATE"))	);
 			}
-			
+			return members;
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -45,6 +76,6 @@ public class MemberDao {
 			
 		}
 		
-		return null;
+		
 	}
 }

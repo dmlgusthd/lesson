@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spms.dao.MemberDao;
+import spms.vo.Member;
+
 @WebServlet("/member/delete")
 public class MemberDeleteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -46,4 +49,22 @@ public class MemberDeleteServlet extends HttpServlet {
 		}
 
 	}
+	public void doPost(
+			HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {MemberDao dao = new MemberDao();
+	if(request.getParameter("no") != null){
+		int no = Integer.parseInt(request.getParameter("no"));
+		Member member = new Member();
+		member.setNo(no);
+		
+		try {
+			ServletContext sc = this.getServletContext();
+			Connection connection = (Connection)sc.getAttribute("conn");
+			dao.delete(member);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		response.sendRedirect("list");
+	}
+}
 }
