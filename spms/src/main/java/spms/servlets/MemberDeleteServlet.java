@@ -56,6 +56,7 @@ public class MemberDeleteServlet extends HttpServlet {
 		int no = Integer.parseInt(request.getParameter("no"));
 		Member member = new Member();
 		member.setNo(no);
+		System.out.println(no);
 		
 		try {
 			ServletContext sc = this.getServletContext();
